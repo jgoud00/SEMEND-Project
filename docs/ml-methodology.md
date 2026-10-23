@@ -1,5 +1,11 @@
 # Synthetic gesture methodology
 
+## Revised report scope
+
+These are educational synthetic gesture benchmarks retained under the revised report. They are not live grip-quality, force or health predictors. Session recording and real-data evaluation are planned. New-person claims require participant holdouts; session grouping alone is insufficient. Operator triggers and generated optical values are not clinical labels or predictors.
+
+See [report alignment](report-alignment.md) for status and hardware boundaries.
+
 `backend/app/ml.py` generates independent trials for Rest, Grip, Wrist flexion, Wrist extension and Forearm rotation. Default seed 1000 generates 6 trials/class (30 total) of 2 seconds at 4 kHz; there are 19 windows/trial (570 total), each 200 ms with 50% overlap. Intensity, noise and mains vary by trial using a seeded RNG. Trial IDs, sample rates, seeds, labels, noise, interference, duration, clipping metadata and window start times are saved with features.
 
 Seven EMG features are aligned with eight IMU features: mean X/Y/Z acceleration, RMS X/Y/Z angular velocity, mean pitch and mean roll. EMG-only, IMU-only and fusion comparisons use the same held-out trials. The non-rest EMG scenarios deliberately share statistical distributions; no perfect EMG separation is manufactured. IMU rotation trajectories are programmed differently, so high IMU/fusion scores do not establish human generalization.

@@ -1,10 +1,16 @@
 # Analytical analog design
 
+## Revised report scope
+
+This document describes the educational custom INA826/OPA2376 model. The fixed physical front end is one BioAmp EXG Pill; its configuration, gain and response are unverified. None of the voltages, gain, noise, CMRR, component or ADC assumptions below calibrates the physical Uno/BioAmp setup.
+
+See [report alignment](report-alignment.md) for status and hardware boundaries.
+
 The sections below describe the initial waveform model. The follow-up [engineering analysis](engineering-analysis.md) adds an equivalent component-defined Sallen-Key candidate, band-limited white-noise estimates, component tolerance sweeps and actual SPICE checks. The primary dashboard waveform model itself remains analytical. OPA2376 isolated checks pass; INA826 compatibility does not, so full-chain manufacturer-model validation is still unresolved.
 
 ## Reference and traceability
 
-The revised technical report was not available in the supplied attachment or empty project directory. Initial design assumptions therefore come from the user's brief. Formula verification used Texas Instruments' official [INA826 datasheet, SBOS562G](https://www.ti.com/lit/ds/symlink/ina826.pdf) and [OPA2376 datasheet, SBOS406G](https://www.ti.com/lit/ds/symlink/opa2376.pdf), consulted 2026-10-23.
+The initial implementation preceded receipt of the revised report. Its theoretical assumptions below are retained for educational comparison; the current hardware mapping is defined by the revised report. Formula verification used Texas Instruments' official [INA826 datasheet, SBOS562G](https://www.ti.com/lit/ds/symlink/ina826.pdf) and [OPA2376 datasheet, SBOS406G](https://www.ti.com/lit/ds/symlink/opa2376.pdf), consulted 2026-10-23.
 
 `backend/app/analog.py` implements the following equations. Generator voltages are differential EMG inputs; an input common-mode waveform is not synthesized. The model **assumes valid common mode** and ideal input protection. It does not claim to verify the INA826's operating envelope, resistor network, supply, load or patient safety.
 

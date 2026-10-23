@@ -1,5 +1,11 @@
 # Architecture
 
+## Revised report scope
+
+The current project targets Arduino Uno + one BioAmp EXG Pill + MPU-6050 + hand gripper. The runtime remains educational simulation; live acquisition, recording and replay are planned. `project.json` supplies the shared inventory/status/task contract to `/api/project` and the dashboard overview. `/api/project/report` serves the revised PDF. Simulation exports identify the custom-AFE model as educational rather than physical BioAmp calibration. The existing numerical architecture below is retained for that educational scope.
+
+See [report alignment](report-alignment.md) for status and hardware boundaries.
+
 The browser sends a bounded configuration through Vite's same-origin proxy to FastAPI. `schemas.py` validates at that trust boundary. `simulation.py` owns deterministic seeded EMG, IMU and PPG synthesis. `analog.py` conditions the EMG with continuous-time ideal filter transfer functions sampled as state-space systems. `dsp.py` analyzes the quantized, input-referred signal. `main.py` assembles numerical arrays, sample counts, provenance and warnings.
 
 `frontend/src/api.ts` defines the frontend contract, performs requests and downloads the exact completed response. `main.tsx` owns configuration and trial state; `MLPanel.tsx` handles training, model choice, prediction and benchmark displays. AbortController and generation checks reject stale responses after pause, reset and parameter changes. Each running update advances the seed. State lives in memory; no database or cloud services are involved.

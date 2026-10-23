@@ -1,5 +1,11 @@
 # Generated circuit checks
 
+## Revised report scope
+
+These netlists belong to the educational custom-AFE study retained in the revised report. They are not a verified BioAmp schematic, wiring plan or physical prototype measurement.
+
+See [report alignment](../../docs/report-alignment.md) for status and hardware boundaries.
+
 The actual executed netlists and numerical files are in `results/spice/`. Run `scripts/engineering_experiment.py`, or the dashboard's **Run SPICE verification** control. The generator is `backend/app/spice.py`.
 
 - `ideal.cir`: actual Sallen-Key resistor/capacitor network with ideal unity buffers, scalar INA/post gains, AC, transient and resistor-noise analyses. No notch or device rail behavior.

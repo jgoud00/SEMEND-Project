@@ -1,5 +1,17 @@
 # Verification record
 
+Current scope: Uno/BioAmp/MPU-6050 inventory with educational simulation implemented; live acquisition, recording and replay planned. The dated records below describe software/simulation checks at their respective milestones, not physical hardware validation. See [report alignment](report-alignment.md).
+
+
+## Report alignment - 2026-10-23
+
+Aligned the default dashboard, shared project contract, API health/project metadata, trial exports and documentation with the revised report: Arduino Uno, one BioAmp EXG Pill, MPU-6050 and gripper. The original 28-page PDF and pixel-identical cover remain preserved. Live acquisition, recording, replay and calibration remain planned/unverified.
+
+**62 backend tests passed**, including the shared inventory/unknown-measurement contract, contiguous 35-second protocol, simulation provenance and report serving/missing-file behavior. **Production build and ESLint passed.** Six of seven browser cases passed in the final full run; the remaining scenario case used the old pulse-tile selector. After updating it to `SIMULATED PULSE`, that case passed in a targeted rerun, including PPG dropout, tolerance updates and actual SPICE. Thus all seven browser cases have passed against the final application; they were not one uninterrupted seven-pass run. The first run was also interrupted by the final HTML edit causing a development reload.
+
+The report overview mobile-width and source-boundary checks passed. A SHA-256 comparison preserved all 42 existing files under datasets/ and results/ byte-for-byte. Browser artifacts remain isolated from those saved results. Local Markdown links and diff whitespace checks passed. Existing Starlette test-client deprecation and Vite bundle-size advisories remain; no physical hardware testing was performed.
+
+
 ## Ponytail optimization — 2026-10-23
 
 Profiling the default trial identified state-space conditioning as the largest cost and the 200-draw tolerance sweep as the next substantial engineering cost. Conditioning retains its existing numerics. The tolerance sweep now evaluates component draws in NumPy batches while preserving the original seeded draw order. Training and prediction share an EMG/IMU feature-trial path; prediction no longer constructs unused PPG, spectra, decimation and engineering reports. Training reads window timestamps once instead of constructing a pandas row for each exported probability record. No dependencies, model settings or API response fields changed.

@@ -1,5 +1,11 @@
 # DSP pipeline
 
+## Revised report scope
+
+The pipeline below processes high-rate generated signals. It must not be reused unchanged for the unverified legacy approximately 250 Hz physical stream: that stream cannot preserve a 20-450 Hz EMG spectrum or be decimated to 1 kHz. Initial live work is planned around envelope/activity and verified low-frequency motion.
+
+See [report alignment](report-alignment.md) for status and hardware boundaries.
+
 Default acquisition is 4 kHz, with 2 kHz Nyquist. Alternative 2/8 kHz configurations regenerate all time-domain data at that rate. The clean carrier is seeded Gaussian activity filtered approximately 20–450 Hz and normalized to keep it within a 5 mVpp full-scale assumption. Burst envelope and intensity set clean activation. Artifacts include 50 Hz mains, 3 Hz motion, white/colored noise and an electrode DC offset. Fatigue blends toward lower-frequency activity over the trial; it is illustrative rather than physiologically validated.
 
 After analog conditioning and 12-bit quantization, the ADC output is centered at 1.65 V and divided by nominal total gain. Thus features are **input-referred** and include effects of clipping, analog attenuation and quantization. They are not ground-truth clean EMG. Charts label volts/millivolts explicitly.

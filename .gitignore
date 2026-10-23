@@ -12,3 +12,7 @@ results/browser/
 frontend/test-results/
 frontend/playwright-report/
 frontend/tsconfig.tsbuildinfo
+
+# Local report generation and private future sensor sessions
+tmp/
+recordings/

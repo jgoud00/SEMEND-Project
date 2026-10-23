@@ -16,6 +16,7 @@ test('uses returned benchmark provenance and locks model selection during predic
     } })
   })
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await page.getByRole('button', { name: 'Machine learning', exact: true }).click()
   await expect(page.getByText('60 independent trials')).toContainText('seed 7')
   await page.getByRole('button', { name: 'Predict trial' }).click()
@@ -35,6 +36,7 @@ test('renders real API data and starts, pauses, resets and exports a trial', asy
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await expect(page.getByTestId('seed')).toContainText('42')
   await expect(page.getByText('8,000 EMG samples')).toBeVisible()
   await expect(page.getByText('0.226', { exact: false }).first()).toBeVisible()
@@ -60,6 +62,7 @@ test('renders real API data and starts, pauses, resets and exports a trial', asy
 
 test('every acquisition control reaches the API and circuit/multimodal tabs work', async ({ page }) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await expect(page.getByTestId('seed')).toContainText('42')
   const response = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().sample_rate_hz === 8000)
   await page.getByLabel('Sampling rate').selectOption('8000')
@@ -88,6 +91,7 @@ test('every acquisition control reaches the API and circuit/multimodal tabs work
 test('mobile layout fits and backend failures are visible', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await expect(page.getByTestId('seed')).toContainText('42')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   await page.screenshot({ path: testInfo.outputPath('dashboard-mobile.png'), fullPage: true })
@@ -100,6 +104,7 @@ test('mobile layout fits and backend failures are visible', async ({ page }, tes
 test('trains actual grouped benchmarks and predicts with the selected model', async ({ page }, testInfo) => {
   test.setTimeout(180000)
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await expect(page.getByTestId('seed')).toContainText('42')
   await page.getByRole('button', { name: 'Machine learning', exact: true }).click()
   await page.getByRole('button', { name: 'Train benchmarks' }).click()
@@ -114,6 +119,7 @@ test('trains actual grouped benchmarks and predicts with the selected model', as
 
 test('expanded scenarios and circuit assumptions update real results', async ({ page }, testInfo) => {
   await page.goto('/')
+  await page.getByRole('button', { name: 'EMG laboratory', exact: true }).click()
   await expect(page.getByTestId('seed')).toContainText('42')
   await page.getByRole('button', { name: 'Motion & pulse', exact: true }).click()
   await page.getByText('Motion & pulse settings', { exact: true }).click()
@@ -122,7 +128,7 @@ test('expanded scenarios and circuit assumptions update real results', async ({ 
   await page.getByLabel('Trial duration').selectOption('5')
   await page.getByLabel('PPG scenario', { exact: true }).selectOption('Dropout')
   await expect(page.getByText('PPG: Dropout', { exact: false })).toBeVisible()
-  await expect(page.locator('.stat').filter({ hasText: 'PULSE ESTIMATE' })).toContainText('—')
+  await expect(page.locator('.stat').filter({ hasText: 'SIMULATED PULSE' })).toContainText('—')
   await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
   await expect(page.getByRole('heading', { name: '20–450 Hz noise estimate' })).toBeVisible()
   await page.getByText('Circuit assumptions', { exact: true }).click()
@@ -136,4 +142,22 @@ test('expanded scenarios and circuit assumptions update real results', async ({ 
   expect(report).toMatch(/partial|passed|unavailable/)
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.screenshot({ path: testInfo.outputPath('dashboard-engineering.png'), fullPage: true })
+})
+
+
+test('project overview matches the report and keeps planned hardware separate from simulation', async ({ page }, testInfo) => {
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Available-hardware project' })).toBeVisible()
+  await expect(page.getByRole('rowheader', { name: 'Arduino Uno', exact: true })).toBeVisible()
+  await expect(page.getByRole('row', { name: 'live acquisition planned' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '35-second grip task' })).toBeVisible()
+  await expect(page.locator('.task-protocol li')).toHaveCount(7)
+  await expect(page.getByRole('button', { name: 'Export trial' })).toBeDisabled()
+  await expect(page.getByRole('link', { name: 'Open revised project report' })).toHaveAttribute('href', '/api/project/report')
+  await page.setViewportSize({ width: 390, height: 844 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('project-overview-mobile.png'), fullPage: true })
+  await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
+  await expect(page.getByText('These gain, noise, component and SPICE values', { exact: false })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Export trial' })).toBeEnabled()
 })

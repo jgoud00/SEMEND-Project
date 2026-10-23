@@ -1,0 +1,39 @@
+{
+  "name": "ForearmSense AI",
+  "scope": "EMG and motion-based grip activity and stability analysis",
+  "report": "output/pdf/ForearmSense_AI_AECD_PBL_REVISED_UNO.pdf",
+  "data_source": "synthetic",
+  "hardware": [
+    { "name": "Arduino Uno", "role": "ADC acquisition and serial transport", "status": "Confirmed inventory; revision, ADC reference and firmware unverified" },
+    { "name": "BioAmp EXG Pill", "role": "One analog EMG channel", "status": "Confirmed inventory; gain and bandpass configuration unverified" },
+    { "name": "MPU-6050", "role": "Acceleration and angular rate", "status": "Confirmed inventory; ranges, rate and mounting unverified; no magnetometer" },
+    { "name": "Hand gripper", "role": "Grip/release task", "status": "Confirmed inventory; no force measurement" }
+  ],
+  "capabilities": {
+    "simulation": "implemented",
+    "live_acquisition": "planned",
+    "session_recording": "planned",
+    "session_replay": "planned",
+    "hardware_calibration": "unverified",
+    "human_validation": "not established"
+  },
+  "measured_channels": {
+    "emg": null, "acceleration": null, "angular_rate": null,
+    "heart_rate_bpm": null, "spo2_pct": null, "grip_force_n": null,
+    "blood_flow": null, "absolute_yaw_deg": null
+  },
+  "acquisition": {
+    "adc_bits": null, "adc_reference_v": null, "sample_rate_hz": null,
+    "note": "Classic Uno/R3 10-bit operation is provisional. Legacy approximately 250 Hz output is unverified and cannot preserve a 20-450 Hz spectrum."
+  },
+  "task_protocol": [
+    { "start_s": 0, "end_s": 5, "phase": "Rest" },
+    { "start_s": 5, "end_s": 10, "phase": "Squeeze" },
+    { "start_s": 10, "end_s": 15, "phase": "Rest" },
+    { "start_s": 15, "end_s": 20, "phase": "Squeeze" },
+    { "start_s": 20, "end_s": 25, "phase": "Rest" },
+    { "start_s": 25, "end_s": 30, "phase": "Squeeze" },
+    { "start_s": 30, "end_s": 35, "phase": "Rest" }
+  ],
+  "educational_model": "Custom INA826/OPA2376 conditioning, 12-bit 3.3 V ADC, high-rate DSP, PPG and gesture ML are educational simulations; they are not BioAmp/Uno calibration or measured physiology."
+}

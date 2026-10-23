@@ -1,6 +1,10 @@
 # ForearmSense AI
 
-**Multimodal Biomedical Signal Laboratory**
+**EMG and Motion-Based Grip Activity and Stability Analysis**
+
+Available-hardware project design: [Arduino Uno + BioAmp EXG Pill + MPU-6050 mapping](docs/fixed-hardware-project-map.md). This maps the original plans and academic report to the user-confirmed hardware; the current application remains a synthetic laboratory until live acquisition is implemented.
+
+Revised academic report: [PDF](output/pdf/ForearmSense_AI_AECD_PBL_REVISED_UNO.pdf) and [editable manuscript](docs/ForearmSense_AI_AECD_PBL_REVISED_UNO.md).
 
 Design and Simulation of an Intelligent Multimodal Forearm Wearable for EMG-Based Muscle Activity and Motion Monitoring. AECD · 25EC1302E · KL University, Hyderabad.
 
@@ -11,13 +15,23 @@ Design and Simulation of an Intelligent Multimodal Forearm Wearable for EMG-Base
 | O GopiChand | 2510040023 |
 | C Meghasyam | 2510040072 |
 
+## Report and implementation scope
+
+Confirmed hardware: **Arduino Uno + one BioAmp EXG Pill + MPU-6050 + hand gripper**. Uno revision, ADC settings, firmware, acquisition rate and module calibration remain unverified. There is no working optical pulse sensor or instrumented force sensor.
+
+The dashboard opens with **Project overview**: hardware, capability status and the planned 35-second rest/grip protocol. Laboratory tabs run educational simulations. Custom INA826/OPA2376 gains, 12-bit/3.3 V ADC settings, high-rate spectral analysis and generated PPG are model assumptions, not properties measured on the available hardware.
+
+**Live acquisition, real-session recording and replay are planned**, as stated in the report. Measured HR, SpO2, force, blood flow and absolute heading are unavailable. The legacy approximately 250 Hz output cannot preserve a 20-450 Hz EMG spectrum.
+
+[project.json](project.json) is the shared hardware/status/protocol contract used by the dashboard and `/api/project`. Trial API responses and exports retain synthetic provenance and the educational-model boundary. See [report alignment](docs/report-alignment.md) for the directory map and evidence boundaries.
+
 ## What works
 
 The first milestone implements an end-to-end, local synthetic EMG laboratory: reproducible electrode signals → analytical INA826 gain → second-order high-pass → optional notch → fourth-order low-pass → post-gain → clipped 12-bit ADC → FFT / PSD / windowed features → React dashboard. Six-axis IMU, PPG, verified downsampling to 1 kHz, and five trial-grouped gesture classifiers are also integrated. All chart samples and benchmark scores come from Python execution; the frontend does not invent fallback readings.
 
 The problem is to explore how electrode artifacts, filtering, gain and quantization affect a small muscle signal before building hardware. This prototype demonstrates signal processing and model assumptions; it does not measure a person or validate a wearable.
 
-**Every signal is synthetic.** No clinical claims, measured grip force, SpO₂, absolute yaw or real human gesture recognition. The revised report referenced in the brief was not attached; design inputs come from the supplied implementation brief and cited datasheets. Dashboard waveforms remain analytical. Separate actual SPICE checks verify an ideal-buffer R/C candidate and OPA2376 gain; INA826 macro-model compatibility fails its gain check, so full device-chain SPICE remains unverified.
+**Every signal is synthetic.** No clinical claims, measured grip force, SpO₂, absolute yaw or real human gesture recognition. The revised report now defines the fixed-hardware project. The custom-AFE model below is retained as educational analysis rather than BioAmp calibration. Dashboard waveforms remain analytical. Separate actual SPICE checks verify an ideal-buffer R/C candidate and OPA2376 gain; INA826 macro-model compatibility fails its gain check, so full device-chain SPICE remains unverified.
 
 ## Install on Windows
 
@@ -103,6 +117,8 @@ The CLI saves artifacts for review. For browser inference, use **Train benchmark
 
 ![Synthetic signal chain](results/figures/signal-chain.png)
 
+Historical synthetic dashboard screenshot (before report-alignment navigation):
+
 ![Dashboard with API data](results/figures/dashboard-desktop.png)
 
 ## Check the implementation
@@ -125,7 +141,9 @@ The browser suite starts isolated servers on 18000 and 15173 and refuses occupie
 
 | Method | Path | Behavior |
 | --- | --- | --- |
-| GET | `/api/health` | Status and synthetic provenance |
+| GET | `/api/health` | Runtime status, synthetic provenance and planned capability status |
+| GET | `/api/project` | Confirmed inventory, unavailable measurements, status and 35-second task contract |
+| GET | `/api/project/report` | Revised PDF in the original report template; 404 if missing |
 | GET | `/api/config` | Defaults and JSON Schema |
 | POST | `/api/simulation/emg` | Complete trial with analog/DSP and secondary modalities |
 | POST | `/api/simulation/multimodal` | Same synchronized trial response |
@@ -140,17 +158,15 @@ The browser suite starts isolated servers on 18000 and 15173 and refuses occupie
 
 Simulation and analog POST endpoints accept bounded `SimulationConfig`; ML endpoints use the separate schemas described in Swagger. Unknown fields, non-finite numbers, invalid rates and out-of-range settings return HTTP 422. EMG arrays are volts; IMU uses m/s² and degrees/s; optical amplitude is arbitrary units. Trial duration is limited to 10 seconds to bound computation. Responses contain numerical arrays, never images.
 
-## Scope and next phases
+## Implementation roadmap from the revised report
 
-| Phase | Status |
-| --- | --- |
-| First EMG/API/dashboard milestone | Implemented; see verification evidence |
-| Multimodal integration | Seeded expanded IMU/PPG scenarios, common time origin, quality-gated HR, charts and exports |
-| Advanced analog engineering | Candidate Sallen-Key topology, band-limited white-noise budget, R/C Monte Carlo, actual ideal-buffer SPICE AC/transient/resistor-noise checks, OPA macro-model gain/DC implemented; INA model compatibility, full common-mode envelope, complete physical noise/rail design remain unresolved |
-| DSP | FFT, Welch PSD, seven EMG features and response-verified FIR downsampling implemented; FIR/IIR comparisons, LMS, DFT comparisons and pole-zero/step plots pending |
-| ML | Five classifiers, trial-grouped evaluation, EMG/IMU/fusion comparisons, nested grouped SVM calibration, trial-bootstrap accuracy CIs, artifacts, inference API and dashboard implemented |
+1. Verify Uno revision, actual sketch, BioAmp configuration, MPU ranges and serial packet format without changing working hardware.
+2. Add validated serial ingestion with actual timing, source labels, missing-field handling and visible disconnects.
+3. Add baseline calibration, the 35-second task, raw recording and timestamp-based review/replay.
+4. Evaluate activation timing, envelope consistency and movement stability within the verified acquisition bandwidth.
+5. Consider real-data classifiers only with independent labels and appropriate session/participant holdouts.
 
-Next: resolve INA826 macro-model compatibility in the supported vendor simulator, verify operating envelope and physical protection/reference design, extend the noise budget beyond white in-band sources, and compare advanced DSP algorithms. Model validation on real people remains a separate future study. There are no decorative ML controls or stub inference endpoints.
+The existing custom-AFE/SPICE, synthetic PPG and five-class ML tools remain educational studies. Repairing a theoretical INA model or buying STM32/MAX30102 hardware is not a prerequisite for the available-hardware project.
 
 ## Design reference and limits
 

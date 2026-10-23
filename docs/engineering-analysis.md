@@ -1,5 +1,11 @@
 # Expanded scenarios and circuit engineering
 
+## Revised report scope
+
+All custom-AFE components, analytical noise/tolerance calculations and SPICE checks below are educational studies. They do not describe the physical BioAmp circuit or verified Uno acquisition. The revised project requires no replacement MCU, custom AFE or optical sensor.
+
+See [report alignment](report-alignment.md) for status and hardware boundaries.
+
 All outputs here are synthetic signals or model calculations. The revised project report is still unavailable. New engineering assumptions are explicit and do not establish a safe wearable circuit.
 
 ## Reproduce

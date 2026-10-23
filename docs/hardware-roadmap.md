@@ -1,12 +1,13 @@
 # Hardware roadmap
 
-No human-connected experiment is authorized or implemented. A simulation cannot establish electrical safety, calibration or medical-device compliance.
+The [revised report](../output/pdf/ForearmSense_AI_AECD_PBL_REVISED_UNO.pdf) and [fixed-hardware mapping](fixed-hardware-project-map.md) define the project: **Arduino Uno + one BioAmp EXG Pill + MPU-6050 + hand gripper**. No new MCU, amplifier or optical sensor is required.
 
-1. Obtain the revised report. Review the implemented Sallen-Key candidate and tolerance assumptions, then complete protection, bias/reference and preferred-series component selection.
-2. Check INA826 common-mode/differential/output operating envelope at 3.3 V for every offset scenario. Verify OPA2376 headroom, gain-bandwidth, noise and stability under the actual load.
-3. Resolve the downloaded INA826 model's failed gain check in a vendor-supported simulator. The local ngspice candidate filter AC/transient/resistor-noise checks and OPA gain/DC checks are implemented; source hashes and logs are preserved. This partial verification does not establish the full device chain.
-4. Verify the circuit on an isolated bench with a signal generator and dummy electrode impedance only. Test startup recovery, offsets, clipping, anti-alias rejection and ADC/reference accuracy. No person should be connected.
-5. Only under qualified supervision and an approved electrical-safety/ethics plan should a separate future project consider human recordings, battery isolation, leakage limits, electrode procedures and applicable standards.
-6. Validate sensor calibration, sample clocks, synchronization and actual gesture labels. Measure subject/session-generalization; compare real observations to simulation assumptions.
+1. Identify Uno revision, actual firmware, ADC reference/resolution, BioAmp configuration and MPU ranges/rate. Inspect the existing serial contract and record representative packets; preserve working wiring.
+2. Verify actual sample timing and UART capacity. The approximately 250 Hz legacy EMG output cannot preserve a 20-450 Hz spectrum. Start with envelope/activity and verified low-frequency motion.
+3. Implement read-only serial ingestion with malformed-packet rejection, unavailable fields, explicit source labels and disconnect/gap/reset handling.
+4. Add baseline/reference calibration, the 35-second protocol, raw session recording and timestamp-based replay. Keep recordings local and excluded from Git by default.
+5. Assess repeatability with calibration on designated data and evaluation on held-out holds. Use independent labels and session/participant holdouts before real-data ML claims.
 
-EMG amplitude alone is not grip force. A six-axis IMU cannot provide drift-free absolute yaw. Single-channel synthetic PPG cannot provide validated SpO₂. No current module makes those claims.
+Live acquisition, recording and replay remain planned. Exact wiring is not prescribed without verified module labels and existing configuration. Body-connected operation requires separate review of the existing hardware; successful software tests do not establish electrical safety.
+
+The custom INA826/OPA2376/SPICE work remains an [educational engineering study](engineering-analysis.md), not a requirement to replace the BioAmp. No working optical sensor, calibrated grip-force channel, magnetometer or absolute yaw is confirmed. Measured HR, SpO2, blood flow and force remain unavailable.
