@@ -1,0 +1,139 @@
+import { test, expect } from '@playwright/test'
+
+test('uses returned benchmark provenance and locks model selection during prediction', async ({ page }) => {
+  await page.route('**/api/ml/metrics', route => route.fulfill({ json: {
+    source: 'regression fixture', seed: 7, trials: 60, windows: 1140,
+    labels: [], records: [], limitations: 'Synthetic test fixture',
+  } }))
+  let release!: () => void
+  const pending = new Promise<void>(resolve => { release = resolve })
+  await page.route('**/api/ml/predict', async route => {
+    expect(route.request().postDataJSON().model).toBe('Random Forest')
+    await pending
+    await route.fulfill({ json: {
+      model: 'Random Forest', scenario: 'Grip', seed: 42, predicted_gesture: 'Grip',
+      class_probabilities: { Grip: 1 }, domain_warning: null,
+    } })
+  })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Machine learning', exact: true }).click()
+  await expect(page.getByText('60 independent trials')).toContainText('seed 7')
+  await page.getByRole('button', { name: 'Predict trial' }).click()
+  try {
+    await expect(page.getByLabel('Model', { exact: true })).toBeDisabled()
+    await expect(page.getByLabel('Model', { exact: true })).toHaveValue('Random Forest')
+  } finally {
+    release()
+  }
+  await expect(page.getByRole('heading', { name: 'Predicted: Grip' })).toBeVisible()
+  await expect(page.getByLabel('Model', { exact: true })).toBeEnabled()
+  await page.getByLabel('Model', { exact: true }).selectOption('SVM')
+  await expect(page.getByRole('heading', { name: 'Predicted: Grip' })).toHaveCount(0)
+})
+
+test('renders real API data and starts, pauses, resets and exports a trial', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('/')
+  await expect(page.getByTestId('seed')).toContainText('42')
+  await expect(page.getByText('8,000 EMG samples')).toBeVisible()
+  await expect(page.getByText('0.226', { exact: false }).first()).toBeVisible()
+  expect(await page.locator('.recharts-line-curve').count()).toBeGreaterThanOrEqual(5)
+  await page.getByRole('button', { name: 'Start simulation' }).click()
+  await expect(page.getByTestId('seed')).toContainText('43')
+  await page.getByRole('button', { name: 'Pause simulation' }).click()
+  const frozen = await page.getByTestId('seed').innerText()
+  await page.waitForTimeout(2400)
+  await expect(page.getByTestId('seed')).toHaveText(frozen)
+  await expect(page.getByText('PAUSED', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Reset experiment' }).click()
+  await expect(page.getByTestId('seed')).toContainText('42')
+  await expect(page.getByRole('button', { name: 'Export trial' })).toBeEnabled()
+  const downloadEvent = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export trial' }).click()
+  const download = await downloadEvent
+  expect(download.suggestedFilename()).toBe('forearmsense-synthetic-seed-42.json')
+  await download.saveAs(testInfo.outputPath('export-seed42.json'))
+  await page.screenshot({ path: testInfo.outputPath('dashboard-desktop.png'), fullPage: true })
+  expect(errors).toEqual([])
+})
+
+test('every acquisition control reaches the API and circuit/multimodal tabs work', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByTestId('seed')).toContainText('42')
+  const response = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().sample_rate_hz === 8000)
+  await page.getByLabel('Sampling rate').selectOption('8000')
+  expect((await (await response).json()).provenance.samples).toBe(16000)
+  await expect(page.getByText('16,000 EMG samples')).toBeVisible()
+  const gestureResponse = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().gesture === 'Rest')
+  await page.getByLabel('Gesture scenario').selectOption('Rest')
+  expect((await (await gestureResponse).json()).config.gesture).toBe('Rest')
+  const notchResponse = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().notch === false)
+  await page.getByRole('switch', { name: '50 Hz notch filter' }).uncheck()
+  expect((await (await notchResponse).json()).config.notch).toBe(false)
+  const gainResponse = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().post_gain === 51)
+  await page.getByLabel('Post-amplifier gain').focus()
+  await page.getByLabel('Post-amplifier gain').press('ArrowRight')
+  expect((await (await gainResponse).json()).analog.post_gain).toBe(51)
+  await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Analog frequency response' })).toBeVisible()
+  await expect(page.getByRole('cell', { name: '71.76 dB', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Motion & pulse', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Optical pulse' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Orientation estimate' })).toBeVisible()
+  await page.getByRole('button', { name: 'Experiment details', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Reproducible by design' })).toBeVisible()
+})
+
+test('mobile layout fits and backend failures are visible', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await expect(page.getByTestId('seed')).toContainText('42')
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('dashboard-mobile.png'), fullPage: true })
+  await page.route('**/api/simulation/multimodal', route => route.fulfill({ status: 503, body: '{}' }))
+  await page.getByRole('button', { name: 'Start simulation' }).click()
+  await expect(page.getByRole('alert')).toContainText('503')
+  await expect(page.getByRole('button', { name: 'Start simulation' })).toBeVisible()
+})
+
+test('trains actual grouped benchmarks and predicts with the selected model', async ({ page }, testInfo) => {
+  test.setTimeout(180000)
+  await page.goto('/')
+  await expect(page.getByTestId('seed')).toContainText('42')
+  await page.getByRole('button', { name: 'Machine learning', exact: true }).click()
+  await page.getByRole('button', { name: 'Train benchmarks' }).click()
+  await expect(page.getByText('30 independent trials')).toBeVisible({ timeout: 120000 })
+  await expect(page.getByRole('heading', { name: 'Confusion matrix' })).toBeVisible()
+  await page.getByLabel('Model', { exact: true }).selectOption('Logistic Regression')
+  await page.getByRole('button', { name: 'Predict trial' }).click()
+  await expect(page.getByRole('heading', { name: 'Predicted:', exact: false })).toBeVisible()
+  await expect(page.locator('.probability')).toHaveCount(5)
+  await page.screenshot({ path: testInfo.outputPath('dashboard-ml.png'), fullPage: true })
+})
+
+test('expanded scenarios and circuit assumptions update real results', async ({ page }, testInfo) => {
+  await page.goto('/')
+  await expect(page.getByTestId('seed')).toContainText('42')
+  await page.getByRole('button', { name: 'Motion & pulse', exact: true }).click()
+  await page.getByText('Motion & pulse settings', { exact: true }).click()
+  await page.getByLabel('Motion scenario', { exact: true }).selectOption('Tremor')
+  await expect(page.getByText('Estimated tremor peak: 6.00 Hz.', { exact: false })).toBeVisible()
+  await page.getByLabel('Trial duration').selectOption('5')
+  await page.getByLabel('PPG scenario', { exact: true }).selectOption('Dropout')
+  await expect(page.getByText('PPG: Dropout', { exact: false })).toBeVisible()
+  await expect(page.locator('.stat').filter({ hasText: 'PULSE ESTIMATE' })).toContainText('—')
+  await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
+  await expect(page.getByRole('heading', { name: '20–450 Hz noise estimate' })).toBeVisible()
+  await page.getByText('Circuit assumptions', { exact: true }).click()
+  const updated = page.waitForResponse(r => r.url().includes('/api/simulation/multimodal') && r.request().postDataJSON().resistor_tolerance_pct === 1.5)
+  await page.getByLabel('Resistor tolerance').focus()
+  await page.getByLabel('Resistor tolerance').press('ArrowRight')
+  expect((await (await updated).json()).analog.tolerances.resistor_tolerance_pct).toBe(1.5)
+  await page.getByRole('button', { name: 'Run SPICE verification' }).click()
+  await expect(page.getByTestId('spice-report')).toContainText('SPICE status:', { timeout: 45000 })
+  const report = await page.getByTestId('spice-report').innerText()
+  expect(report).toMatch(/partial|passed|unavailable/)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.screenshot({ path: testInfo.outputPath('dashboard-engineering.png'), fullPage: true })
+})

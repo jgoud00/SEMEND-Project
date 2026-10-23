@@ -1,0 +1,4 @@
+set ngbehavior=ps
+codemodel ../../.tools/ngspice41/Fusion360-Update/ngspice/lib/ngspice/spice2poly.cm
+codemodel ../../.tools/ngspice41/Fusion360-Update/ngspice/lib/ngspice/analog.cm
+codemodel ../../.tools/ngspice41/Fusion360-Update/ngspice/lib/ngspice/table.cm

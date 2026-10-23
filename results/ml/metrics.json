@@ -1,0 +1,930 @@
+{
+  "source": "synthetic-data benchmark; no human validation",
+  "seed": 1000,
+  "trials": 30,
+  "windows": 570,
+  "labels": [
+    "Forearm rotation",
+    "Grip",
+    "Rest",
+    "Wrist extension",
+    "Wrist flexion"
+  ],
+  "features": {
+    "EMG": [
+      "rms_v",
+      "mav_v",
+      "waveform_length_v",
+      "zero_crossings",
+      "slope_sign_changes",
+      "mean_frequency_hz",
+      "median_frequency_hz"
+    ],
+    "IMU": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "gyro_x",
+      "gyro_y",
+      "gyro_z",
+      "pitch",
+      "roll"
+    ],
+    "Fusion": [
+      "rms_v",
+      "mav_v",
+      "waveform_length_v",
+      "zero_crossings",
+      "slope_sign_changes",
+      "mean_frequency_hz",
+      "median_frequency_hz",
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "gyro_x",
+      "gyro_y",
+      "gyro_z",
+      "pitch",
+      "roll"
+    ]
+  },
+  "cv": "3-fold stratified trial-grouped; SVM uses nested grouped calibration",
+  "folds": [
+    {
+      "train_trials": [
+        "Forearm rotation-0",
+        "Forearm rotation-2",
+        "Forearm rotation-3",
+        "Forearm rotation-4",
+        "Grip-0",
+        "Grip-1",
+        "Grip-2",
+        "Grip-4",
+        "Rest-0",
+        "Rest-1",
+        "Rest-3",
+        "Rest-5",
+        "Wrist extension-1",
+        "Wrist extension-2",
+        "Wrist extension-3",
+        "Wrist extension-4",
+        "Wrist flexion-1",
+        "Wrist flexion-2",
+        "Wrist flexion-3",
+        "Wrist flexion-5"
+      ],
+      "test_trials": [
+        "Forearm rotation-1",
+        "Forearm rotation-5",
+        "Grip-3",
+        "Grip-5",
+        "Rest-2",
+        "Rest-4",
+        "Wrist extension-0",
+        "Wrist extension-5",
+        "Wrist flexion-0",
+        "Wrist flexion-4"
+      ]
+    },
+    {
+      "train_trials": [
+        "Forearm rotation-1",
+        "Forearm rotation-3",
+        "Forearm rotation-4",
+        "Forearm rotation-5",
+        "Grip-1",
+        "Grip-3",
+        "Grip-4",
+        "Grip-5",
+        "Rest-1",
+        "Rest-2",
+        "Rest-4",
+        "Rest-5",
+        "Wrist extension-0",
+        "Wrist extension-3",
+        "Wrist extension-4",
+        "Wrist extension-5",
+        "Wrist flexion-0",
+        "Wrist flexion-2",
+        "Wrist flexion-3",
+        "Wrist flexion-4"
+      ],
+      "test_trials": [
+        "Forearm rotation-0",
+        "Forearm rotation-2",
+        "Grip-0",
+        "Grip-2",
+        "Rest-0",
+        "Rest-3",
+        "Wrist extension-1",
+        "Wrist extension-2",
+        "Wrist flexion-1",
+        "Wrist flexion-5"
+      ]
+    },
+    {
+      "train_trials": [
+        "Forearm rotation-0",
+        "Forearm rotation-1",
+        "Forearm rotation-2",
+        "Forearm rotation-5",
+        "Grip-0",
+        "Grip-2",
+        "Grip-3",
+        "Grip-5",
+        "Rest-0",
+        "Rest-2",
+        "Rest-3",
+        "Rest-4",
+        "Wrist extension-0",
+        "Wrist extension-1",
+        "Wrist extension-2",
+        "Wrist extension-5",
+        "Wrist flexion-0",
+        "Wrist flexion-1",
+        "Wrist flexion-4",
+        "Wrist flexion-5"
+      ],
+      "test_trials": [
+        "Forearm rotation-3",
+        "Forearm rotation-4",
+        "Grip-1",
+        "Grip-4",
+        "Rest-1",
+        "Rest-5",
+        "Wrist extension-3",
+        "Wrist extension-4",
+        "Wrist flexion-2",
+        "Wrist flexion-3"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "model": "Logistic Regression",
+      "modality": "EMG",
+      "accuracy": 0.356140350877193,
+      "balanced_accuracy": 0.3561403508771929,
+      "precision_macro": 0.32552573896473624,
+      "recall_macro": 0.3561403508771929,
+      "f1_macro": 0.33635642238461383,
+      "brier_multiclass": 0.6664225267758254,
+      "confusion_matrix": [
+        [
+          22,
+          34,
+          10,
+          23,
+          25
+        ],
+        [
+          29,
+          39,
+          4,
+          23,
+          19
+        ],
+        [
+          2,
+          1,
+          108,
+          2,
+          1
+        ],
+        [
+          18,
+          44,
+          7,
+          12,
+          33
+        ],
+        [
+          26,
+          38,
+          10,
+          18,
+          22
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.2542982456140351,
+        0.4736842105263158
+      ]
+    },
+    {
+      "model": "SVM",
+      "modality": "EMG",
+      "accuracy": 0.4,
+      "balanced_accuracy": 0.4,
+      "precision_macro": 0.3722071704314284,
+      "recall_macro": 0.4,
+      "f1_macro": 0.3643873272318209,
+      "brier_multiclass": 0.6920619446188779,
+      "confusion_matrix": [
+        [
+          17,
+          43,
+          15,
+          16,
+          23
+        ],
+        [
+          15,
+          57,
+          6,
+          17,
+          19
+        ],
+        [
+          0,
+          4,
+          110,
+          0,
+          0
+        ],
+        [
+          10,
+          56,
+          14,
+          19,
+          15
+        ],
+        [
+          14,
+          46,
+          17,
+          12,
+          25
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.287719298245614,
+        0.5221491228070173
+      ]
+    },
+    {
+      "model": "Decision Tree",
+      "modality": "EMG",
+      "accuracy": 0.3140350877192982,
+      "balanced_accuracy": 0.3140350877192982,
+      "precision_macro": 0.3484110902052036,
+      "recall_macro": 0.3140350877192982,
+      "f1_macro": 0.3240531054459149,
+      "brier_multiclass": 0.8160730667349729,
+      "confusion_matrix": [
+        [
+          34,
+          29,
+          2,
+          28,
+          21
+        ],
+        [
+          42,
+          27,
+          1,
+          32,
+          12
+        ],
+        [
+          10,
+          4,
+          78,
+          0,
+          22
+        ],
+        [
+          43,
+          29,
+          0,
+          31,
+          11
+        ],
+        [
+          44,
+          21,
+          2,
+          38,
+          9
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.22280701754385965,
+        0.42105263157894735
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "modality": "EMG",
+      "accuracy": 0.3508771929824561,
+      "balanced_accuracy": 0.3508771929824561,
+      "precision_macro": 0.3582276278986107,
+      "recall_macro": 0.3508771929824561,
+      "f1_macro": 0.3531801709541814,
+      "brier_multiclass": 0.6999401821301723,
+      "confusion_matrix": [
+        [
+          20,
+          26,
+          5,
+          27,
+          36
+        ],
+        [
+          19,
+          35,
+          2,
+          27,
+          31
+        ],
+        [
+          2,
+          1,
+          96,
+          7,
+          8
+        ],
+        [
+          25,
+          24,
+          1,
+          24,
+          40
+        ],
+        [
+          20,
+          36,
+          5,
+          28,
+          25
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.26223684210526316,
+        0.4624122807017542
+      ]
+    },
+    {
+      "model": "Gradient Boosting",
+      "modality": "EMG",
+      "accuracy": 0.3649122807017544,
+      "balanced_accuracy": 0.36491228070175435,
+      "precision_macro": 0.36432281788139437,
+      "recall_macro": 0.36491228070175435,
+      "f1_macro": 0.3641131137590745,
+      "brier_multiclass": 0.6981643926030032,
+      "confusion_matrix": [
+        [
+          26,
+          23,
+          7,
+          30,
+          28
+        ],
+        [
+          21,
+          35,
+          3,
+          21,
+          34
+        ],
+        [
+          1,
+          1,
+          100,
+          10,
+          2
+        ],
+        [
+          21,
+          30,
+          2,
+          25,
+          36
+        ],
+        [
+          27,
+          23,
+          5,
+          37,
+          22
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.2780263157894737,
+        0.4764473684210525
+      ]
+    },
+    {
+      "model": "Logistic Regression",
+      "modality": "IMU",
+      "accuracy": 0.7982456140350878,
+      "balanced_accuracy": 0.7982456140350876,
+      "precision_macro": 0.7987834342169629,
+      "recall_macro": 0.7982456140350876,
+      "f1_macro": 0.7981909911005491,
+      "brier_multiclass": 0.3186993397418748,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          94,
+          20,
+          0,
+          0
+        ],
+        [
+          0,
+          13,
+          101,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          73,
+          41
+        ],
+        [
+          0,
+          0,
+          0,
+          41,
+          73
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.7473684210526317,
+        0.8553070175438596
+      ]
+    },
+    {
+      "model": "SVM",
+      "modality": "IMU",
+      "accuracy": 0.7175438596491228,
+      "balanced_accuracy": 0.7175438596491228,
+      "precision_macro": 0.7176851743544617,
+      "recall_macro": 0.7175438596491228,
+      "f1_macro": 0.7174675219883058,
+      "brier_multiclass": 0.38706253910995275,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          78,
+          36,
+          0,
+          0
+        ],
+        [
+          0,
+          41,
+          73,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          73,
+          41
+        ],
+        [
+          0,
+          0,
+          0,
+          43,
+          71
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.6622368421052631,
+        0.7807894736842105
+      ]
+    },
+    {
+      "model": "Decision Tree",
+      "modality": "IMU",
+      "accuracy": 0.8824561403508772,
+      "balanced_accuracy": 0.8824561403508773,
+      "precision_macro": 0.8873563218390805,
+      "recall_macro": 0.8824561403508773,
+      "f1_macro": 0.8807843137254903,
+      "brier_multiclass": 0.1517432182109849,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          114,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          114,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          94,
+          20
+        ],
+        [
+          0,
+          0,
+          0,
+          47,
+          67
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.824561403508772,
+        0.9403508771929824
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "modality": "IMU",
+      "accuracy": 0.9894736842105263,
+      "balanced_accuracy": 0.9894736842105264,
+      "precision_macro": 0.9895320197044335,
+      "recall_macro": 0.9894736842105264,
+      "f1_macro": 0.9894728741823778,
+      "brier_multiclass": 0.06750544543517902,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          114,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          114,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          110,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          112
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.9789473684210527,
+        0.9982456140350877
+      ]
+    },
+    {
+      "model": "Gradient Boosting",
+      "modality": "IMU",
+      "accuracy": 0.9894736842105263,
+      "balanced_accuracy": 0.9894736842105264,
+      "precision_macro": 0.9895320197044335,
+      "recall_macro": 0.9894736842105264,
+      "f1_macro": 0.9894728741823778,
+      "brier_multiclass": 0.05515857492769954,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          114,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          114,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          110,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          112
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.980701754385965,
+        0.9964912280701754
+      ]
+    },
+    {
+      "model": "Logistic Regression",
+      "modality": "Fusion",
+      "accuracy": 0.8210526315789474,
+      "balanced_accuracy": 0.8210526315789475,
+      "precision_macro": 0.8210923386760246,
+      "recall_macro": 0.8210526315789475,
+      "f1_macro": 0.821024075386617,
+      "brier_multiclass": 0.23144942554634823,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          110,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          5,
+          109,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          66,
+          48
+        ],
+        [
+          0,
+          0,
+          0,
+          45,
+          69
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.7499561403508773,
+        0.8921491228070174
+      ]
+    },
+    {
+      "model": "SVM",
+      "modality": "Fusion",
+      "accuracy": 0.8070175438596491,
+      "balanced_accuracy": 0.8070175438596492,
+      "precision_macro": 0.8085939242817659,
+      "recall_macro": 0.8070175438596492,
+      "f1_macro": 0.8053395718852219,
+      "brier_multiclass": 0.26411336684220793,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          105,
+          9,
+          0,
+          0
+        ],
+        [
+          0,
+          8,
+          106,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          79,
+          35
+        ],
+        [
+          0,
+          0,
+          0,
+          58,
+          56
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.7403508771929823,
+        0.8771929824561404
+      ]
+    },
+    {
+      "model": "Decision Tree",
+      "modality": "Fusion",
+      "accuracy": 0.8771929824561403,
+      "balanced_accuracy": 0.8771929824561404,
+      "precision_macro": 0.8955792682926831,
+      "recall_macro": 0.8771929824561404,
+      "f1_macro": 0.8709886023765258,
+      "brier_multiclass": 0.14872256317153962,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          114,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          114,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          104,
+          10
+        ],
+        [
+          0,
+          0,
+          0,
+          60,
+          54
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.8069298245614035,
+        0.9421052631578948
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "modality": "Fusion",
+      "accuracy": 0.9052631578947369,
+      "balanced_accuracy": 0.9052631578947368,
+      "precision_macro": 0.9070899122807017,
+      "recall_macro": 0.9052631578947368,
+      "f1_macro": 0.9049577291494744,
+      "brier_multiclass": 0.1578949346323548,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          110,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          110,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          84,
+          30
+        ],
+        [
+          0,
+          0,
+          0,
+          16,
+          98
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.8631578947368421,
+        0.944780701754386
+      ]
+    },
+    {
+      "model": "Gradient Boosting",
+      "modality": "Fusion",
+      "accuracy": 0.987719298245614,
+      "balanced_accuracy": 0.987719298245614,
+      "precision_macro": 0.9877337437475953,
+      "recall_macro": 0.987719298245614,
+      "f1_macro": 0.9877190620010389,
+      "brier_multiclass": 0.062054210824487664,
+      "confusion_matrix": [
+        [
+          114,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          114,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          114,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          110,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          3,
+          111
+        ]
+      ],
+      "accuracy_ci95_trial_bootstrap": [
+        0.9789473684210525,
+        0.9964912280701754
+      ]
+    }
+  ],
+  "limitations": "Scores evaluate programmed scenarios only. CIs use 500 trial bootstrap resamples of OOF accuracy, not model refits; no independent model-selection holdout."
+}

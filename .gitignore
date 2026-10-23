@@ -1,0 +1,14 @@
+.venv/
+.tools/
+circuits/models/*.zip
+circuits/models/*.lib
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+*.log
+*.pid
+results/browser/
+frontend/test-results/
+frontend/playwright-report/
+frontend/tsconfig.tsbuildinfo

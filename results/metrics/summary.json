@@ -1,0 +1,48 @@
+{
+  "source": "synthetic",
+  "seed": 42,
+  "samples": 8000,
+  "features": {
+    "rms_v": 0.00022625104216873095,
+    "mav_v": 0.00016119507586601775,
+    "waveform_length_v": 0.4830194102490696,
+    "zero_crossings": 937,
+    "slope_sign_changes": 556,
+    "mean_frequency_hz": 211.73621990535875,
+    "median_frequency_hz": 203.125
+  },
+  "ina_clipped_samples": 0,
+  "clipped_samples": 0,
+  "lp_checks": [
+    {
+      "frequency_hz": 450.0,
+      "attenuation_db": 3.0102999566398116,
+      "alias_hz": 450.0
+    },
+    {
+      "frequency_hz": 500.0,
+      "attenuation_db": 5.215378315904882,
+      "alias_hz": 500.0
+    },
+    {
+      "frequency_hz": 1000.0,
+      "attenuation_db": 27.750295481211865,
+      "alias_hz": 1000.0
+    },
+    {
+      "frequency_hz": 2000.0,
+      "attenuation_db": 51.825427077232355,
+      "alias_hz": 2000.0
+    },
+    {
+      "frequency_hz": 3550.0,
+      "attenuation_db": 71.76126743188605,
+      "alias_hz": 450.0
+    },
+    {
+      "frequency_hz": 4000.0,
+      "attenuation_db": 75.9077983156401,
+      "alias_hz": 0.0
+    }
+  ]
+}

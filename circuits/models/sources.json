@@ -1,0 +1,24 @@
+[
+  {
+    "name": "ngspice-41 official Fusion360 update, portable Windows",
+    "url": "https://ngspice.sourceforge.io/eagle-upgrade/ngspice-Fusion360-Update.7z",
+    "archive_sha256": "3ea9ba44a8eb6c9b0791f5c093239e0bee5dc5dda334fa1c42f385ca6cec599d",
+    "reason": "Current stable download link returned HTTP 404 during implementation; official version-41 bundle used instead."
+  },
+  {
+    "name": "INA826",
+    "url": "https://www.ti.com/lit/zip/sbomc48",
+    "archive_sha256": "b8d327020255934b669ae904567f17bde30f9753451d39fb1d89ba8aeff5cbe3",
+    "original_model_sha256": "350ea59e977e5749f7ae614d84c79647f21584b8e0019e9e98b292c34e36851f",
+    "adapted_model_sha256": "7bc45556b556f23d05dfe0556e07dbe6d0199a89be81e747e40e73d3c6b5d461",
+    "adaptation": "Line endings/encoding normalized; INA diode AREA made explicit and D model whitespace normalized. Original archive and vendor copyright retained. These syntax edits do not establish simulator compatibility."
+  },
+  {
+    "name": "OPA2376",
+    "url": "https://www.ti.com/lit/zip/sbom309",
+    "archive_sha256": "294abff7573909567433832165670c474cede7eeb3fe5458f5e3b0258f32d218",
+    "original_model_sha256": "b607c1799acc7af26b58dce6420a3432c7bd288056ba90a9495e4ef94e6d6da4",
+    "adapted_model_sha256": "f50f1db42744ce5dc5e6efacbe0221e8b49839bd3f913151a749ee6f52e68eb6",
+    "adaptation": "Line endings/encoding normalized; INA diode AREA made explicit and D model whitespace normalized. Original archive and vendor copyright retained. These syntax edits do not establish simulator compatibility."
+  }
+]

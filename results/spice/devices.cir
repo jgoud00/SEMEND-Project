@@ -1,0 +1,30 @@
+TI macro-model isolated amplifier checks; not full-chain validation
+.temp 25.0
+.include ../../circuits/models/INA826-pspice.lib
+.include ../../circuits/models/OPA2376.lib
+Vdd vdd 0 3.3
+Vref ref 0 1.65
+Vp inp 0 DC 1.65005 AC 0.5
+Vn inn 0 DC 1.64995 AC -0.5
+Xina inp inn rgp rgm vdd 0 ina ref INA826
+Rg rgm rgp 5490
+Rload ina ref 10k
+Vsig signal 0 DC 0.0001 AC 1
+Eoffset postin ref signal 0 1
+Xpost postin neg vdd 0 post OPAx376
+Rf post neg 49000
+Rb neg ref 1000
+Rl post ref 10k
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+op
+print v(ina) v(post)
+ac dec 50 1 1000000
+wrdata device-ac.txt v(ina) v(post)
+dc Vsig -0.05 0.05 0.0005
+wrdata post-dc.txt v(post)
+quit
+.endc
+.end
