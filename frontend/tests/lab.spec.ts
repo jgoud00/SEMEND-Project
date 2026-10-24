@@ -128,7 +128,7 @@ test('expanded scenarios and circuit assumptions update real results', async ({ 
   await page.getByLabel('Trial duration').selectOption('5')
   await page.getByLabel('PPG scenario', { exact: true }).selectOption('Dropout')
   await expect(page.getByText('PPG: Dropout', { exact: false })).toBeVisible()
-  await expect(page.locator('.stat').filter({ hasText: 'SIMULATED PULSE' })).toContainText('—')
+  await expect(page.locator('.stat').filter({ hasText: 'Simulated pulse' })).toContainText('—')
   await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
   await expect(page.getByRole('heading', { name: '20–450 Hz noise estimate' })).toBeVisible()
   await page.getByText('Circuit assumptions', { exact: true }).click()
@@ -160,4 +160,25 @@ test('project overview matches the report and keeps planned hardware separate fr
   await page.getByRole('button', { name: 'Analog circuit', exact: true }).click()
   await expect(page.getByText('These gain, noise, component and SPICE values', { exact: false })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Export trial' })).toBeEnabled()
+})
+
+test('redesigned workspace keeps every tab accessible and contained across screen sizes', async ({ page }, testInfo) => {
+  await page.goto('/')
+  await expect(page.getByText('Planned acquisition path', { exact: true })).toBeVisible()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'Skip to laboratory' })).toBeFocused()
+  await page.keyboard.press('Enter')
+  const tabs = ['Project overview', 'EMG laboratory', 'Analog circuit', 'Motion & pulse', 'Machine learning', 'Experiment details']
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 })
+    for (const tab of tabs) {
+      const button = page.getByRole('button', { name: tab, exact: true })
+      await button.click()
+      await expect(button).toHaveAttribute('aria-current', 'page')
+      await expect(page.getByRole('heading', { name: tab, exact: true })).toBeVisible()
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${tab} at ${width}px`).toBe(true)
+    }
+  }
+  await page.getByRole('button', { name: 'Project overview', exact: true }).click()
+  await page.screenshot({ path: testInfo.outputPath('overview-desktop.png'), fullPage: true })
 })
